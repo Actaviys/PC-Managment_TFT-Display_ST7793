@@ -1,0 +1,20 @@
+# from serial import SerialBase
+# import serial
+# import serial.tools.list_ports as stl # Імпорт для списку портів
+# import time
+
+# # ports_ls = stl.comports() # Список доступних COM портів
+# # for sp in ports_ls:
+# #     print("Порт", sp.device)
+# #     print("Опис", sp.description)
+# #     print("Виробник", sp.manufacturer, "\n")
+    
+
+# serialPort = SerialBase
+
+# # while True:
+# #     time.sleep(.2)
+# #     dataPort = serialPort.readline()
+# #     print(dataPort)
+
+

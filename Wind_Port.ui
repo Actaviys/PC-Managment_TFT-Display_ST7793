@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>616</width>
+    <height>295</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">background-color: rgba(8, 109, 3, 60);</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <widget class="QRadioButton" name="Cursor">
+    <property name="geometry">
+     <rect>
+      <x>260</x>
+      <y>130</y>
+      <width>16</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true"/>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="checkable">
+     <bool>false</bool>
+    </property>
+    <property name="checked">
+     <bool>false</bool>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="PortBox">
+    <property name="geometry">
+     <rect>
+      <x>536</x>
+      <y>0</y>
+      <width>80</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <property name="whatsThis">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;qwer&lt;/p&gt;&lt;p&gt;qwerq&lt;/p&gt;&lt;p&gt;wer&lt;/p&gt;&lt;p&gt;qwer&lt;/p&gt;&lt;p&gt;qwe&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgba(62, 216, 34, 60);</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="PortConnectButton">
+    <property name="geometry">
+     <rect>
+      <x>537</x>
+      <y>21</y>
+      <width>80</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgba(62, 216, 34, 60);</string>
+    </property>
+    <property name="text">
+     <string>Connect</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="PortDisconectButton">
+    <property name="geometry">
+     <rect>
+      <x>537</x>
+      <y>44</y>
+      <width>80</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgba(62, 216, 34, 60);</string>
+    </property>
+    <property name="text">
+     <string>Disconect</string>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QStatusBar" name="Statusbar"/>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
