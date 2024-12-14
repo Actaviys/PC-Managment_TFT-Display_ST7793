@@ -3,7 +3,7 @@
 #include <MCUFRIEND_kbv.h>
 MCUFRIEND_kbv tft;
 #include <TouchScreen.h>
-#define MINPRESSURE 100
+#define MINPRESSURE 200
 #define MAXPRESSURE 1000
 
 #define BLACK          0x0000
@@ -52,24 +52,22 @@ void setup() {
 }
 
 void loop() {
-  // static uint32_t tmr = 0;
-  // if (millis() - tmr > 500){ //Таймер на відправку даних з сенсора
-  //   tmr = millis();
-  //   // Serial.print("touch ");
-  //   // Serial.print("X");
-  //   // Serial.println("Y");
-  // }
-  
-
   TSPoint p = ts.getPoint();
   bool pressed = (p.z > MINPRESSURE && p.z < MAXPRESSURE);
-  if (pressed) {
-    pixel_x = map(p.x, TS_LEFT, TS_RT, 0, tft.width()); //.kbv має сенс для мене
-    pixel_y = map(p.y, TS_TOP, TS_BOT, 0, tft.height());
-    Serial.print("touch ");
-    Serial.print(pixel_x);
-    Serial.print(" ");
-    Serial.println(pixel_y);
+    if (pressed) {
+      static uint32_t tmr = 0;
+      if (millis() - tmr > 80){ // Таймер на відправку даних
+        tmr = millis();
+        pixel_x = map(p.x, TS_LEFT, TS_RT, 0, tft.width()); // Перетворення положення натиску через map в розмір екрана
+        pixel_y = map(p.y, TS_TOP, TS_BOT, 0, tft.height());
+        String resData = "touch:";
+        resData += pixel_x;
+        resData += ",";
+        resData += pixel_y;
+        resData += ",";
+        resData += "OK";
+        Serial.println(resData);
+    }
   }
   
 }

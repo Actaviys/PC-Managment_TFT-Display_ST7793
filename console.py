@@ -44,17 +44,18 @@ def cursor_curation(xy: list):
 
 
 
-def parse_input(user_input):
+def parse_input(user_input: str) -> list:
     """ 
     Функція для парсингу команд
     """
-    cmd, *args = user_input.split()  # Розбиваю команду
-    # cmd = cmd.strip().lower()  # Записую команду в окрему змінну
-    return cmd, *args  # Повертаю команду і аргументи
+    cmd, args = user_input.split(":")  # Зрізаю команду
+    a = args.split(",") # Розбиваю аргументи після команди
+    return cmd, a  # Повертаю команду і аргументи
 
 def readPort(): #Читаю порт
-    # read_L = str(serial.readLine(), 'utf-8').strip().split(",") #Читаю ESP8266 списком даних
-    command, *args = parse_input(str(serial.readLine(), 'utf-8').strip())
+    read_L = str(serial.readLine(), 'utf-8').strip() # Читаю дані з порту
+    command, args = parse_input(read_L)
+    # print(command, args)
     match command:
         case "touch": cursor_curation(args)
         
