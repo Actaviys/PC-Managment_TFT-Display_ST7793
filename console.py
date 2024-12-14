@@ -39,8 +39,14 @@ ui.PortDisconectButton.clicked.connect(disconnectPort)
 
 
 
-def cursor_curation(xy: list):
+def cursor_curation(xy: list): # Приймає позицію натиску на сенсор
     print(xy[0], xy[1])
+
+
+def buttons_screen(valButt): # Функція читання кнопок
+    for vb in valButt:
+        valB = vb
+    print(valB)
 
 
 
@@ -55,9 +61,11 @@ def parse_input(user_input: str) -> list:
 def readPort(): #Читаю порт
     read_L = str(serial.readLine(), 'utf-8').strip() # Читаю дані з порту
     command, args = parse_input(read_L)
-    # print(command, args)
+    print(command, args)
     match command:
-        case "touch": cursor_curation(args)
+        case "touch_positions": cursor_curation(args)
+        
+        case "value_buttons": buttons_screen(args) # Читаю кнопки
         
 
 serial.readyRead.connect(readPort)
