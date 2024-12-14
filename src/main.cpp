@@ -3,7 +3,7 @@
 #include <MCUFRIEND_kbv.h>
 MCUFRIEND_kbv tft;
 #include <TouchScreen.h>
-#define MINPRESSURE 200
+#define MINPRESSURE 100
 #define MAXPRESSURE 1000
 
 #define BLACK          0x0000
@@ -25,8 +25,8 @@ MCUFRIEND_kbv tft;
 // ВСІ сенсорній панелі та проводка ІНШІ
 // копіювати та вставляти результати з TouchScreen_Calibr_native.ino
 const int XP=9,XM=A3,YP=A2,YM=8; 
-// const int TS_LEFT=39,TS_RT=966,TS_TOP=115,TS_BOT=926;
-const int TS_LEFT=41,TS_RT=946,TS_TOP=106,TS_BOT=916;
+const int TS_LEFT=40,TS_RT=956,TS_TOP=115,TS_BOT=926;
+// const int TS_LEFT=41,TS_RT=946,TS_TOP=106,TS_BOT=916;
 
 TouchScreen ts = TouchScreen(XP, YP, XM, YM, 300);
 
@@ -64,7 +64,7 @@ void TouchScreenPositionSend(int x, int y){ // Надсилаю дані кур�
   Serial.println(resData);
 }
 
-bool touchFlag = 0;
+bool touchFlag = 1;
 int pixel_x, pixel_y;     //Touch_getXY() оновлює глобальні змінні
 bool Touch_getXY(void){
   TSPoint p = ts.getPoint();

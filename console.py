@@ -61,7 +61,7 @@ def parse_input(user_input: str) -> list:
 def readPort(): #Читаю порт
     read_L = str(serial.readLine(), 'utf-8').strip() # Читаю дані з порту
     command, args = parse_input(read_L)
-    print(command, args)
+    print("Вхідні дані: ", command, args)
     match command:
         case "touch_positions": cursor_curation(args)
         
