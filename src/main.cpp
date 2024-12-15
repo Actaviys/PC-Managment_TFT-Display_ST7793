@@ -1,8 +1,9 @@
 #include <Arduino.h>
 #include <Adafruit_GFX.h>
 #include <MCUFRIEND_kbv.h>
-MCUFRIEND_kbv tft;
 #include <TouchScreen.h>
+#include <GParser.h> // Бібліотека для парсингу
+
 #define MINPRESSURE 100
 #define MAXPRESSURE 1000
 
@@ -22,12 +23,13 @@ MCUFRIEND_kbv tft;
 
 #define LED1 52 
 
-// ВСІ сенсорній панелі та проводка ІНШІ
+// Сенсорні панелі та проводка ІНШІ
 // копіювати та вставляти результати з TouchScreen_Calibr_native.ino
 const int XP=9,XM=A3,YP=A2,YM=8; 
 const int TS_LEFT=40,TS_RT=956,TS_TOP=115,TS_BOT=926;
 // const int TS_LEFT=41,TS_RT=946,TS_TOP=106,TS_BOT=916;
 
+MCUFRIEND_kbv tft;
 TouchScreen ts = TouchScreen(XP, YP, XM, YM, 300);
 
 Adafruit_GFX_Button on_btn, off_btn;
@@ -82,10 +84,11 @@ bool Touch_getXY(void){
 }
 
 
+String textInput = "";
 void texts_actives(){
-  tft.setCursor(90, 120);
-  tft.setTextColor(GREEN);  tft.setTextSize(4);
-  tft.print("status_text");
+  tft.setCursor(10, 10);
+  tft.setTextColor(CYAN);  tft.setTextSize(4);
+  tft.print(textInput);
 }
 
 
@@ -95,6 +98,10 @@ void ValueButtonSend(String but){ // Надсилаю значення кноп�
   Serial.println(resValue);
 }
 
+
+// void InputMesage(int inpData){
+
+// }
 
 
 void ControlsButtonList(){
@@ -114,7 +121,6 @@ void ControlsButtonList(){
 
   if (off_btn.justReleased()) off_btn.drawButton();
   if (off_btn.justPressed()) {
-    // text_active();
     off_btn.drawButton(true);
     tft.fillRect(40, 80, 160, 80, RED);
     ValueButtonSend("OFF");
@@ -129,8 +135,31 @@ void ControlsButtonList(){
 
 
 void loop() {
+  if (Serial.available()){
+    char buf[100];
+    Serial.readBytesUntil('\n', buf, 100);
+    GParser data_cmd(buf, ':');
+    int ints[50];
+    data_cmd.parseInts(ints);
+
+    switch (ints[0])
+    {
+    case 0:
+      tft.fillScreen(BLACK);
+      initButtonsFunk();
+      data_cmd.split();
+      textInput = data_cmd[1];
+      break;
+      
+    case 1:
+      int st = ints[1];
+      break;
+    
+    }
+  }
+
   static uint32_t tmr = 0;
-  if (millis() - tmr > 80){ // Таймер на відправку даних
+  if (millis() - tmr > 100){ // Таймер на відправку даних
     tmr = millis();
     texts_actives();
     ControlsButtonList();

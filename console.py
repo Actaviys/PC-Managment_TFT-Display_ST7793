@@ -1,6 +1,7 @@
 from PyQt5 import QtWidgets, uic
 from PyQt5.QtSerialPort import QSerialPort, QSerialPortInfo
 from PyQt5.QtCore import QIODevice
+import pyautogui as pg
 
 app = QtWidgets.QApplication([])
 ui = uic.loadUi("Wind_Port.ui") # #F:/Arduino(sketch)/esp8266_ModeMCU1.0(ESP-12E_Module)/Server_PCmanagment_ESP8266/Python_Files/Window_Server_ESP8266.ui
@@ -8,18 +9,14 @@ ui.setWindowTitle("MEGA-2560")
 
 
 
-serial = QSerialPort()
+serial = QSerialPort() # Створюю порт
 serial.setBaudRate(9600) #Швидкість Порту 460800
-ports = QSerialPortInfo().availablePorts()
+ports = QSerialPortInfo().availablePorts() # Зберігаю інформацію про порти
 ports_list = []
 for pr in ports:
     ports_list.append(pr.portName())
-ui.PortBox.addItems(ports_list)
-
-
-
-
-serial.setPortName("COM9")
+ui.PortBox.addItems(ports_list) # Додаю список портів до `PortBox`
+serial.setPortName("COM9") # Підключаюсь до порту
 serial.open(QIODevice.ReadWrite)
 print("AUTO Connect Port")
 def connectPort():
@@ -38,9 +35,27 @@ def disconnectPort():
 ui.PortDisconectButton.clicked.connect(disconnectPort)
 
 
+def serialSend(dataText):
+    sdT = str(dataText)
+    serial.write(sdT.encode())
+    # print(dataText)
+
+
+def LineSend():
+    editLine = ui.lineEditMessage.displayText()
+    outpText = f"0:{editLine}"
+    serialSend(outpText)
+ui.SendMessageButton.clicked.connect(LineSend)
+
+
+
 
 def cursor_curation(xy: list): # Приймає позицію натиску на сенсор
     print(xy[0], xy[1])
+    x = int(xy[0])
+    y = int(xy[1])
+    print(x, y)
+    pg.move(0, 116, 0.8) 
 
 
 def buttons_screen(valButt): # Функція читання кнопок
@@ -61,7 +76,7 @@ def parse_input(user_input: str) -> list:
 def readPort(): #Читаю порт
     read_L = str(serial.readLine(), 'utf-8').strip() # Читаю дані з порту
     command, args = parse_input(read_L)
-    print("Вхідні дані: ", command, args)
+    # print("Вхідні дані: ", command, args)
     match command:
         case "touch_positions": cursor_curation(args)
         

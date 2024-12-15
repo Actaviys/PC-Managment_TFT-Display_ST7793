@@ -14,14 +14,15 @@
    <string>MainWindow</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">background-color: rgba(8, 109, 3, 60);</string>
+   <string notr="true">background-color: rgba(8, 109, 3, 60);
+color: rgb(219, 227, 255);</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QRadioButton" name="Cursor">
     <property name="geometry">
      <rect>
-      <x>260</x>
-      <y>130</y>
+      <x>290</x>
+      <y>140</y>
       <width>16</width>
       <height>17</height>
      </rect>
@@ -96,6 +97,12 @@
       <height>20</height>
      </rect>
     </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgba(62, 216, 34, 60);</string>
+    </property>
+    <property name="text">
+     <string>WWWWWWWW</string>
+    </property>
    </widget>
    <widget class="QPushButton" name="SendMessageButton">
     <property name="geometry">
@@ -110,7 +117,7 @@
      <string notr="true">background-color: rgba(62, 216, 34, 60);</string>
     </property>
     <property name="text">
-     <string>Disconect</string>
+     <string>Send</string>
     </property>
    </widget>
   </widget>
