@@ -18,7 +18,7 @@ for pr in ports:
 ui.PortBox.addItems(ports_list) # Додаю список портів до `PortBox`
 serial.setPortName("COM9") # Підключаюсь до порту
 serial.open(QIODevice.ReadWrite)
-print("AUTO Connect Port")
+print("-"*50)
 def connectPort():
     print(ui.PortBox.currentText())
     serial.setPortName(str(ui.PortBox.currentText()))

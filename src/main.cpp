@@ -56,22 +56,23 @@ void setup() {
 
 
 
-
-
-void TouchScreenPositionSend(int x, int y){ // Надсилаю дані курсора
+int sx, sy;  
+void TouchScreenPositionSend(int x, int y){ // Надсилаю дані курсора в форматованому варіанті
+  sx = map(x, 13, 400, 0, 1920); // Калібрування для виводу x
+  sy = map(y, 10, 215, 0, 1080); // Калібрування для виводу y
   String resData = "touch_positions:";
-  resData += x;
+  resData += sx;
   resData += ",";
-  resData += y;
+  resData += sy;
   Serial.println(resData);
 }
 
 bool touchFlag = 1;
-int pixel_x, pixel_y;     //Touch_getXY() оновлює глобальні змінні
+int pixel_x, pixel_y;     
 bool Touch_getXY(void){
-  TSPoint p = ts.getPoint();
-  pinMode(YP, OUTPUT);      //відновити спільні шпильки
-  pinMode(XM, OUTPUT);      //тому що TFT контрольні штифти
+  TSPoint p = ts.getPoint(); // Touch_getXY() оновлює глобальні змінні
+  pinMode(YP, OUTPUT);      //Відновити спільні шпильки
+  pinMode(XM, OUTPUT);      //Тому що TFT контрольні штифти
   bool pressed = (p.z > MINPRESSURE && p.z < MAXPRESSURE);
   if (pressed) {
       pixel_x = map(p.x, TS_LEFT, TS_RT, 0, tft.width()); //.kbv має сенс для мене
@@ -159,7 +160,7 @@ void loop() {
   }
 
   static uint32_t tmr = 0;
-  if (millis() - tmr > 150){ // Таймер на відправку даних
+  if (millis() - tmr > 110){ // Таймер на відправку даних
     tmr = millis();
     texts_actives();
     ControlsButtonList();
