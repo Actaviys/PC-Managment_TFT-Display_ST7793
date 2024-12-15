@@ -55,7 +55,8 @@ def cursor_curation(xy: list): # Приймає позицію натиску н
     x = int(xy[0])
     y = int(xy[1])
     print(x, y)
-    pg.move(0, 116, 0.8) 
+    # pg.move(0, 116, 0.8) 
+    pg.moveTo(x, y)
 
 
 def buttons_screen(valButt): # Функція читання кнопок

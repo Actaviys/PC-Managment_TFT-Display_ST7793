@@ -159,7 +159,7 @@ void loop() {
   }
 
   static uint32_t tmr = 0;
-  if (millis() - tmr > 100){ // Таймер на відправку даних
+  if (millis() - tmr > 150){ // Таймер на відправку даних
     tmr = millis();
     texts_actives();
     ControlsButtonList();
