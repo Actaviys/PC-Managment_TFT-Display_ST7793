@@ -4,8 +4,8 @@
 #include <TouchScreen.h>
 #include <GParser.h> // Бібліотека для парсингу
 
-#define MINPRESSURE 100
-#define MAXPRESSURE 1000
+#define MINPRESSURE 20
+#define MAXPRESSURE 900
 
 #define BLACK          0x0000
 #define BLUE           0x001F
@@ -26,40 +26,69 @@
 // Сенсорні панелі та проводка ІНШІ
 // копіювати та вставляти результати з TouchScreen_Calibr_native.ino
 const int XP=9,XM=A3,YP=A2,YM=8; 
-const int TS_LEFT=40,TS_RT=956,TS_TOP=115,TS_BOT=926;
-// const int TS_LEFT=41,TS_RT=946,TS_TOP=106,TS_BOT=916;
+const int TS_LEFT=75,TS_RT=1000,TS_TOP=115,TS_BOT=926;
 
 MCUFRIEND_kbv tft;
 TouchScreen ts = TouchScreen(XP, YP, XM, YM, 300);
 
-Adafruit_GFX_Button on_btn, off_btn;
+Adafruit_GFX_Button sensor_btn, on_off_btn; // Системні кнопки
+Adafruit_GFX_Button right_mouse_btn, left_mouse_btn, mouse_ring_btn;// Кнопки управління
+Adafruit_GFX_Button volume_slider_btn;// Кнопки повзунків
+
+
+bool touchFlag = 0; // Флажок для сенсора
+bool ButtFlag_OnOff = 0; // Для кнопки ON/OFF
 
 
 
-void initButtonsFunk(){
-  on_btn.initButton(&tft,  60, 200, 50, 30, WHITE, GREEN, BLACK, "ON", 2);
-  off_btn.initButton(&tft, 180, 200, 50, 30, WHITE, GREEN, BLACK, "OFF", 2);
-  on_btn.drawButton(false);
-  off_btn.drawButton(false);
+void initButtonsFunk(){ // Функція ініціалізації кнопок
+  sensor_btn.initButton(&tft, 20, 6, 40, 12, WHITE, GREEN, RED, "Sensor", 1);
+  on_off_btn.initButton(&tft, 385, 25, 30, 30, WHITE, BROWN, DARK_BROWN, " ", 1);
+  right_mouse_btn.initButton(&tft, 75, 229, 150, 20, WHITE, CYAN, BLUE, "<<<---", 1);
+  mouse_ring_btn.initButton(&tft, 200, 229, 100, 20, WHITE, CYAN, BLUE, "___", 1);
+  left_mouse_btn.initButton(&tft, 325, 229, 150, 20, WHITE, CYAN, BLUE, "--->>>", 1);
+
+  sensor_btn.drawButton(touchFlag);
+  on_off_btn.drawButton(ButtFlag_OnOff);
+  right_mouse_btn.drawButton(false);
+  mouse_ring_btn.drawButton(false);
+  left_mouse_btn.drawButton(false);
 }
 
+
+
+
+void SliderVolume(int sldVal, int x=30, int y=30){ // Слайдер для регулювання гучності ///////////////////////////////////////////////////
+  // tft.drawLine(25, 40, 25, 100, RED);
+  // tft.drawRect(25, 30, 5, 150, RED);
+  tft.fillRect(x-2, y-8, 4, 150, RED); // Полоска 
+  volume_slider_btn.initButton(&tft, x, y+sldVal, 30, 15, WHITE, DARK_RED, RED, " ", 1);
+  volume_slider_btn.drawButton(false);
+  // tft.fillRect(x, y+1, 30, 15, DARK_RED);
+}
+
+
 void setup() {
-  pinMode(LED1, OUTPUT);
+  pinMode(LED1, OUTPUT); digitalWrite(LED1, touchFlag);
   Serial.begin(9600);
   tft.begin(0x7793); // write-only shield //240x400 ID=0x7793
   tft.setRotation(3);  //PORTRAIT(0) //HORIZONTAL(1) //PORTRAIT(2) //HORIZONTAL(3)
   tft.fillScreen(BLACK);
 
   initButtonsFunk();
+
+  SliderVolume(20, 40, 50); // Слайдер
 }
+
+
 
 
 
 
 int sx, sy;  
 void TouchScreenPositionSend(int x, int y){ // Надсилаю дані курсора в форматованому варіанті
-  sx = map(x, 13, 400, 0, 1920); // Калібрування для виводу x
-  sy = map(y, 10, 215, 0, 1080); // Калібрування для виводу y
+  sx = map(x, 0, 382, 0, 1920); // Калібрування для виводу x
+  sy = map(y, 9, 235, 0, 1080); // Калібрування для виводу y
   String resData = "touch_positions:";
   resData += sx;
   resData += ",";
@@ -67,7 +96,8 @@ void TouchScreenPositionSend(int x, int y){ // Надсилаю дані кур�
   Serial.println(resData);
 }
 
-bool touchFlag = 1;
+
+
 int pixel_x, pixel_y;     
 bool Touch_getXY(void){
   TSPoint p = ts.getPoint(); // Touch_getXY() оновлює глобальні змінні
@@ -75,11 +105,16 @@ bool Touch_getXY(void){
   pinMode(XM, OUTPUT);      //Тому що TFT контрольні штифти
   bool pressed = (p.z > MINPRESSURE && p.z < MAXPRESSURE);
   if (pressed) {
-      pixel_x = map(p.x, TS_LEFT, TS_RT, 0, tft.width()); //.kbv має сенс для мене
-      pixel_y = map(p.y, TS_TOP, TS_BOT, 0, tft.height());
+    static uint32_t tmr_xy = 0;
+    if (millis() - tmr_xy > 80){ // Таймер на відправку даних
+      tmr_xy = millis();
+      pixel_x = map(p.x, TS_LEFT, TS_RT, 0, tft.width()); // Синхронізую дані сенсора, з екраном
+      pixel_y = map(p.y, TS_TOP, TS_BOT, 0, tft.height()); // Синхронізую дані сенсора, з екраном
       if (touchFlag){
-        TouchScreenPositionSend(pixel_x, pixel_y);
+        TouchScreenPositionSend(pixel_x, pixel_y); // Надсилаю дані про позицію натиску на сенсор
+        Serial.println("touch_state: 1"); // Натсилаю  якщо наниснуто на сенсор
       }
+    }
   }
   return pressed;
 }
@@ -90,43 +125,43 @@ void texts_actives(){
   tft.setCursor(10, 10);
   tft.setTextColor(CYAN);  tft.setTextSize(4);
   tft.print(textInput);
+
+  tft.setCursor(100, 100);
+  tft.setTextColor(WHITE);  tft.setTextSize(4);
+  tft.print("");
 }
 
 
-void ValueButtonSend(String but){ // Надсилаю значення кнопок
+void ValueButtonSend(String but, bool bState){ // Надсилаю значення кнопок
   String resValue = "value_buttons:";
   resValue += but;
+  resValue += ",";
+  resValue += bState;
   Serial.println(resValue);
 }
 
 
-// void InputMesage(int inpData){
 
-// }
-
-
-void ControlsButtonList(){
+void ControlsButtonList(){ // Контроль всіх кнопок
   bool down = Touch_getXY();
-  on_btn.press(down && on_btn.contains(pixel_x, pixel_y));
-  off_btn.press(down && off_btn.contains(pixel_x, pixel_y));
+  sensor_btn.press(down && sensor_btn.contains(pixel_x, pixel_y));
+  on_off_btn.press(down && on_off_btn.contains(pixel_x, pixel_y));
 
-  if (on_btn.justReleased()) on_btn.drawButton();
-  if (on_btn.justPressed()) {
-    on_btn.drawButton(true);
-    tft.fillRect(40, 80, 160, 80, MAGENTA);
-
+// Перевірки натискання на кнопки
+  if (sensor_btn.justPressed()) { // Включення та відключення надсиланеня даних з сенсора
     touchFlag = !touchFlag;
-    digitalWrite(LED1, touchFlag);
-    ValueButtonSend("ON");
-  }
 
-  if (off_btn.justReleased()) off_btn.drawButton();
-  if (off_btn.justPressed()) {
-    off_btn.drawButton(true);
-    tft.fillRect(40, 80, 160, 80, RED);
-    ValueButtonSend("OFF");
-      
-  }
+    // ValueButtonSend("Sensor", touchFlag);
+  } if (sensor_btn.justReleased()) sensor_btn.drawButton(touchFlag);
+
+
+  if (on_off_btn.justPressed()) { // ON/OFF
+    ButtFlag_OnOff = !ButtFlag_OnOff;
+    if (ButtFlag_OnOff == 1) tft.fillRect(40, 80, 160, 80, RED); else tft.fillRect(40, 80, 160, 80, GREEN);
+    digitalWrite(LED1, ButtFlag_OnOff);
+
+    ValueButtonSend("On/Off", ButtFlag_OnOff);
+  } if (on_off_btn.isPressed()) on_off_btn.drawButton(ButtFlag_OnOff);
 }
 
 
@@ -136,7 +171,7 @@ void ControlsButtonList(){
 
 
 void loop() {
-  if (Serial.available()){
+  if (Serial.available()){ // Приймаю дані
     char buf[100];
     Serial.readBytesUntil('\n', buf, 100);
     GParser data_cmd(buf, ':');
@@ -159,8 +194,8 @@ void loop() {
     }
   }
 
-  static uint32_t tmr = 0;
-  if (millis() - tmr > 110){ // Таймер на відправку даних
+  static uint32_t tmr = 0; // Таймер на відправку даних
+  if (millis() - tmr > 110){ // Відправляю дані
     tmr = millis();
     texts_actives();
     ControlsButtonList();

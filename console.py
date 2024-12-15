@@ -50,19 +50,19 @@ ui.SendMessageButton.clicked.connect(LineSend)
 
 
 
-def cursor_curation(xy: list): # Приймає позицію натиску на сенсор
+def cursor_curation(xy: list): # Функція керування курсором
     print(xy[0], xy[1])
     x = int(xy[0])
     y = int(xy[1])
-    print(x, y)
+    # print(x, y)
     # pg.move(0, 116, 0.8) 
     pg.moveTo(x, y)
 
 
-def buttons_screen(valButt): # Функція читання кнопок
-    for vb in valButt:
-        valB = vb
-    print(valB)
+def buttons_screen_read(valButt: list): # Функція читання кнопок
+    # for vb in valButt:
+    #     valB = vb
+    print(valButt[0], valButt[1])
 
 
 
@@ -79,9 +79,11 @@ def readPort(): #Читаю порт
     command, args = parse_input(read_L)
     # print("Вхідні дані: ", command, args)
     match command:
-        case "touch_positions": cursor_curation(args)
-        
-        case "value_buttons": buttons_screen(args) # Читаю кнопки
+        case "touch_positions":
+            cursor_curation(args) # Приймає позицію натиску на сенсор
+            
+        case "value_buttons": # Читаю кнопки
+            buttons_screen_read(args) 
         
 
 serial.readyRead.connect(readPort)
